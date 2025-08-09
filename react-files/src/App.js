@@ -1,41 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase";
+
+// Components
+import Header from "./components/Header";
 import Login from "./Login";
 import Register from "./Register";
-import Dashboard from "./Dashboard";
+import Dashboard from "./pages/Dashboard";
+import Courses from "./pages/Courses";
+import Quizzes from "./pages/Quizzes";
 
 export default function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsub();
-  }, []);
+  const [user, loading] = useAuthState(auth);
 
   if (loading) {
-    return <p>Loading...</p>; // simple loading UI
+    return <p>Loading...</p>;
   }
 
   return (
     <Router>
+      {user && <Header />}
       <Routes>
-        {/* Root path: send to dashboard if logged in, else login */}
-        <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
+        {/* Root route redirects based on login status */}
+        <Route
+          path="/"
+          element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
+        />
 
-        {/* Login and register: redirect to dashboard if already logged in */}
-        <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-        <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
+        {/* Auth routes */}
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/dashboard" /> : <Login />}
+        />
+        <Route
+          path="/register"
+          element={user ? <Navigate to="/dashboard" /> : <Register />}
+        />
 
-        {/* Dashboard: protect route */}
-        <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+        {/* Protected routes */}
+        <Route
+          path="/dashboard"
+          element={user ? <Dashboard /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/courses"
+          element={user ? <Courses /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/quizzes"
+          element={user ? <Quizzes /> : <Navigate to="/login" />}
+        />
 
-        {/* Catch-all: send to root */}
+        {/* Catch-all for unknown routes */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
