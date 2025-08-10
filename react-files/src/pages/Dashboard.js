@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import { getFirestore, collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { logEvent } from "../utils/logEvent";
 import "./Dashboard.css";
 
 const db = getFirestore();
@@ -47,6 +48,18 @@ export default function Dashboard() {
     fetchUserCourses();
   }, []);
 
+  async function handleViewCourse(course) {
+    const user = auth.currentUser;
+    if (user) {
+      await logEvent(user.uid, {
+        courseId: course.id,
+        eventType: "dashboard_view_course_click",
+        details: { courseTitle: course.title }
+      });
+    }
+    navigate(`/courses/${course.id}`);
+  }
+
   if (loading) return (
     <Layout>
       <p>Loading your courses...</p>
@@ -68,7 +81,7 @@ export default function Dashboard() {
           <div key={course.id} className="course-card">
             <h3>{course.title}</h3>
             <p>{course.description}</p>
-            <button onClick={() => navigate(`/courses/${course.id}`)}>
+            <button onClick={() => handleViewCourse(course)}>
               View Course
             </button>
           </div>

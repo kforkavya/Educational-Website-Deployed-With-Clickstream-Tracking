@@ -6,6 +6,7 @@ import Layout from "../components/Layout";
 import TextContent from "../components/TextContent";
 import VideoPlayer from "../components/VideoPlayer";
 import QuizComponent from "../components/QuizComponent";
+import { logEvent } from "../utils/logEvent";
 
 const db = getFirestore();
 const auth = getAuth();
@@ -110,7 +111,8 @@ export default function CoursePage() {
               data: content.data,
               courseId,
               contentId: content.id,
-              userId: user.uid
+              userId: user.uid,
+              logEvent
             };
 
             return (
