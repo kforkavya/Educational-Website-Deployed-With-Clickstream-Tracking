@@ -9,7 +9,7 @@ import Login from "./Login";
 import Register from "./Register";
 import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
-import Quizzes from "./pages/Quizzes";
+import CoursePage from "./pages/CoursePage";
 
 export default function App() {
   const [user, loading] = useAuthState(auth);
@@ -44,12 +44,12 @@ export default function App() {
           element={user ? <Dashboard /> : <Navigate to="/login" />}
         />
         <Route
-          path="/courses"
-          element={user ? <Courses /> : <Navigate to="/login" />}
+          path="/courses/:id"
+          element={user ? <CoursePage /> : <Navigate to="/login" />}
         />
         <Route
-          path="/quizzes"
-          element={user ? <Quizzes /> : <Navigate to="/login" />}
+          path="/courses"
+          element={user ? <Courses /> : <Navigate to="/login" />}
         />
 
         {/* Catch-all for unknown routes */}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { getFirestore, collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
 const db = getFirestore();
@@ -10,6 +11,7 @@ const auth = getAuth();
 export default function Dashboard() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchUserCourses() {
@@ -66,7 +68,9 @@ export default function Dashboard() {
           <div key={course.id} className="course-card">
             <h3>{course.title}</h3>
             <p>{course.description}</p>
-            <button>View Course</button>
+            <button onClick={() => navigate(`/courses/${course.id}`)}>
+              View Course
+            </button>
           </div>
         ))}
       </div>
